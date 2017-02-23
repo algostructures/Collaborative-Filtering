@@ -1,2 +1,3 @@
 # Collaborative-Filtering
-Using Bhattacharya Coefficient + Pearson, Final Semester Project.
+Technique: Bhattacharya Coefficient and Pearson.
+Enviornment : Apache Mahout and Java
