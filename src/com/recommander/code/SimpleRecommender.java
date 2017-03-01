@@ -16,6 +16,7 @@ import org.apache.mahout.cf.taste.recommender.UserBasedRecommender;
 import org.apache.mahout.cf.taste.similarity.UserSimilarity;
 
 public class SimpleRecommender {
+    /*
     public static void main(String arg[]) throws IOException, TasteException{
         DataModel model = new FileDataModel(new File("data/movies.csv"));
         
@@ -28,4 +29,8 @@ public class SimpleRecommender {
           System.out.println(recommendation);
         }
     }
+    
+    */
 }
+
+
