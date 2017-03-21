@@ -1,13 +1,18 @@
 package com.recommander.code;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 
 import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.impl.common.LongPrimitiveIterator;
 import org.apache.mahout.cf.taste.model.DataModel;
 
 public class NearestBCItemSimilarity {
-    public long[] getNearestByBC(long ItemID, int N, DataModel model) throws TasteException{
+    DataModel model;
+    NearestBCItemSimilarity(DataModel model){
+        this.model = model;
+    }
+    public HashSet<Long> getNearestByBC(long ItemID, int N) throws TasteException{
         LongPrimitiveIterator Ids = model.getItemIDs();
         ArrayList<ItemRating> ar = new ArrayList<ItemRating>();
         BCItemSimilarity bs = new BCItemSimilarity(model);
@@ -20,11 +25,12 @@ public class NearestBCItemSimilarity {
             }
         }
         Collections.sort(ar);
-        long list[] = new long[N];
+        //long list[] = new long[N];
+        HashSet<Long> neighbour_Set = new HashSet<Long>();
         for(int i = 0; i < N; i++){
-            list[i] = ar.get(i).itemId;
+             neighbour_Set.add(ar.get(i).itemId);
         }
-        return list;
+        return neighbour_Set;
     }
     
     class ItemRating implements Comparable<ItemRating>{
