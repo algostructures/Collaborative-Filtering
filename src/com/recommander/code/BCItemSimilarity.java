@@ -1,6 +1,6 @@
 package com.recommander.code;
 
-import java.util.HashMap;
+
 
 import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.impl.similarity.AbstractItemSimilarity;
