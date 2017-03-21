@@ -7,7 +7,7 @@ import org.apache.mahout.cf.taste.model.DataModel;
 import org.apache.mahout.cf.taste.model.Preference;
 import org.apache.mahout.cf.taste.model.PreferenceArray;
 
-public class UserSimilarity {
+public class User_Similarity {
     double ru;
     double rv;
     double sdu;
@@ -16,8 +16,8 @@ public class UserSimilarity {
     long v;
     static DataModel dm;
     
-    UserSimilarity(DataModel dm){
-        UserSimilarity.dm = dm;
+    User_Similarity(DataModel dm){
+        User_Similarity.dm = dm;
     }
     
     public double similarity(long uid, Long current) throws TasteException{
@@ -36,7 +36,7 @@ public class UserSimilarity {
         
         double similarity = 0;
         for(Preference p_u : u_pre){
-            HashSet<Long> neighbour_Set = NBCS.getNearestByBC(p_u.getItemID(), 10);
+            HashSet<Long> neighbour_Set = NBCS.getNearestByBC(p_u.getItemID(), 3);
             for(Preference p_v : v_pre){
                 if(neighbour_Set.contains(p_v.getItemID())){
                     similarity += BCIS.itemSimilarity(p_u.getItemID(), p_v.getItemID()) * 

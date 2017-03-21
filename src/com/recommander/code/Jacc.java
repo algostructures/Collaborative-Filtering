@@ -14,7 +14,8 @@ public class Jacc {
         FastIDSet fs_u = dm.getItemIDsFromUser(U);
         FastIDSet fs_v = dm.getItemIDsFromUser(V);
         long intersection = fs_u.intersectionSize(fs_v);
-        
-        return 0;
+        fs_v.addAll(fs_u);
+        long union= fs_v.size();
+        return (intersection*1.0)/union;
     }
 }

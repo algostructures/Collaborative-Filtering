@@ -15,7 +15,7 @@ public class UserNeighbours {
     public long[] getClosestUsers(long uid, int k) throws TasteException{
         LongPrimitiveIterator userIds = dm.getUserIDs();
         ArrayList<User_Node> ar = new ArrayList<User_Node>();
-        UserSimilarity us = new UserSimilarity(dm);
+        User_Similarity us = new User_Similarity(dm);
         while(userIds.hasNext()){
             long current = userIds.next();
             if(uid != current){
