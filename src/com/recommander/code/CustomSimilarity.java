@@ -17,7 +17,7 @@ public class CustomSimilarity implements UserSimilarity {
     
     
     public double getCustomSimilarity(long U, long V) throws TasteException{
-        User_Similarity us = new User_Similarity(dm);
+        User_pre us = new User_pre(dm);
         Jacc js = new Jacc(dm);
         return us.similarity(U, V)+js.getJaccardSimilarity(U, V); 
     }

@@ -15,12 +15,17 @@ public class NearestBCItemSimilarity {
     public HashSet<Long> getNearestByBC(long ItemID, int N) throws TasteException{
         LongPrimitiveIterator Ids = model.getItemIDs();
         ArrayList<ItemRating> ar = new ArrayList<ItemRating>();
-        BCItemSimilarity bs = new BCItemSimilarity(model);
+        //BCItemSimilarity bs = new BCItemSimilarity(model);
+        BCPrecalculator bcp = new BCPrecalculator(model);
+        
+        //System.out.println("here");
+        //int count = 20;
         while(Ids.hasNext()){
+            //count--;
             Long current = Ids.next();
             if(ItemID != current){
                 ItemRating temp = new ItemRating(current);
-                temp.rating = bs.itemSimilarity(ItemID, current);
+                temp.rating = bcp.itemSimilarity(ItemID, current);
                 ar.add(temp);
             }
         }

@@ -9,5 +9,6 @@
 	<classpathentry kind="lib" path="lib/mahout-math-0.9.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-api-1.7.23.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-nop-1.7.23.jar"/>
+	<classpathentry kind="lib" path="lib/mongo-java-driver-3.0.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

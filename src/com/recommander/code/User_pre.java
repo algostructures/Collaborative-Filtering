@@ -4,11 +4,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import org.apache.mahout.cf.taste.common.TasteException;
+import org.apache.mahout.cf.taste.impl.common.LongPrimitiveIterator;
 import org.apache.mahout.cf.taste.model.DataModel;
 import org.apache.mahout.cf.taste.model.Preference;
 import org.apache.mahout.cf.taste.model.PreferenceArray;
 
-public class User_Similarity {
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
+
+public class User_pre {
     double ru;
     double rv;
     double sdu;
@@ -17,47 +21,70 @@ public class User_Similarity {
     long v;
     static DataModel dm;
     static int count = 0;
-    static HashMap<Long , int[]> map= new HashMap<Long, int[]>();
-    User_Similarity(DataModel dm){
-        User_Similarity.dm = dm;
+    static HashMap<Long , double[]> map= new HashMap<Long, double[]>();
+    static Table<Long, Long, Double> table = HashBasedTable.create();
+    User_pre(DataModel dm){
+        User_pre.dm = dm;
     }
     
-    
+    public static void preCalculator() throws TasteException{
+        LongPrimitiveIterator k = dm.getUserIDs();
+        
+        while(k.hasNext()){
+            long user = k.next();
+            
+            double[] uPre = new double[2];
+            
+            PreferenceArray uAr = dm.getPreferencesFromUser(user);
+            double avg = calculateUserAverage(uAr);
+            double sdv = calculateUserdeviation(uAr);
+            uPre[0] = avg;
+            uPre[1] = sdv;
+            map.put(user, uPre);
+        }
+    }
     
     public double similarity(long uid, Long current) throws TasteException{
         this.u = uid;
         this.v = current;
+        if(table.contains(u, v)){
+            return table.get(u, v);
+        }
         PreferenceArray u_pre = dm.getPreferencesFromUser(uid);
         PreferenceArray v_pre = dm.getPreferencesFromUser(current);
         
         NearestBCItemSimilarity NBCS = new NearestBCItemSimilarity(dm);
         BCItemSimilarity BCIS = new BCItemSimilarity(dm);
         
-        ru = calculateUserAverage(u_pre);
-        rv = calculateUserAverage(v_pre);
-        sdu = calculateUserdeviation(u_pre);
-        sdv = calculateUserdeviation(v_pre);
+        //BCPrecalculator BP = new BCPrecalculator(dm);
+        
+        double[] uR = map.get(uid);
+        double[] vR = map.get(current);
+        ru = uR[0];
+        rv = vR[0];
+        sdu = uR[1];
+        sdv = vR[1];
         
         double similarity = 0;
         //int count = 0;
         for(Preference p_u : u_pre){
-            
             HashSet<Long> neighbour_Set = NBCS.getNearestByBC(p_u.getItemID(), 3);
             for(Preference p_v : v_pre){
                 if(neighbour_Set.contains(p_v.getItemID())){
-                    System.out.println(User_Similarity.count++);
-
+                    //System.out.println(User_Similarity.count++);
                     similarity += BCIS.itemSimilarity(p_u.getItemID(), p_v.getItemID()) * 
                             sim(p_u.getItemID(), p_v.getItemID());
                     
                 }
             }
-            System.out.println(count++);
+           
         }
+        table.put(u, v, similarity);
+        //System.out.println(uid+" "+current);
         return similarity;
     }
 
-    private double calculateUserdeviation(PreferenceArray pre) {
+    private static double calculateUserdeviation(PreferenceArray pre) {
         double mean = calculateUserAverage(pre);
         double sum = 0;
         for(Preference p : pre){
@@ -66,7 +93,7 @@ public class User_Similarity {
         return Math.sqrt((sum*1.0)/pre.length());
     }
 
-    private double calculateUserAverage(PreferenceArray pre) {
+    private static double calculateUserAverage(PreferenceArray pre) {
         long sum = 0;
         for(Preference p : pre){
             sum += p.getValue();
