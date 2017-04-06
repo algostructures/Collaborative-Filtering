@@ -50,6 +50,9 @@ public class User_pre {
         if(table.contains(u, v)){
             return table.get(u, v);
         }
+        else if(table.contains(v, u)){
+            return table.get(v, u);
+        }
         PreferenceArray u_pre = dm.getPreferencesFromUser(uid);
         PreferenceArray v_pre = dm.getPreferencesFromUser(current);
         
@@ -60,6 +63,7 @@ public class User_pre {
         
         double[] uR = map.get(uid);
         double[] vR = map.get(current);
+        //System.out.println(ru);
         ru = uR[0];
         rv = vR[0];
         sdu = uR[1];
@@ -80,6 +84,7 @@ public class User_pre {
            
         }
         table.put(u, v, similarity);
+        table.put(v, u, similarity);
         //System.out.println(uid+" "+current);
         return similarity;
     }
