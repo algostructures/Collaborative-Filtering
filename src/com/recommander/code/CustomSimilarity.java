@@ -23,7 +23,7 @@ public class CustomSimilarity implements UserSimilarity {
     public double getCustomSimilarity(long U, long V) throws TasteException{
         User_pretable us = new User_pretable(dm);
         Jacc js = new Jacc(dm);
-        System.out.println(U+" "+V);
+        //System.out.println(U+" "+V);
         return us.similarity(U, V)+js.getJaccardSimilarity(U, V); 
     }
 

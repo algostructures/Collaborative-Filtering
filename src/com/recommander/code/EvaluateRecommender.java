@@ -30,7 +30,7 @@ public class EvaluateRecommender {
         
         @Override
         public Recommender buildRecommender(DataModel dm) throws TasteException {
-            UserSimilarity similarity = new CustomSimilarityJMSD(dm);
+            UserSimilarity similarity = new CustomSimilarity(dm);
             UserNeighborhood neighborhood = new ThresholdUserNeighborhood(0.1, similarity, dm);
             return new GenericUserBasedRecommender(dm, neighborhood, similarity);//
             //return null;
