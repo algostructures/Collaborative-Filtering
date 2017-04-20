@@ -1,5 +1,7 @@
 package com.recommander.code;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -17,6 +19,10 @@ public class User_pretable {
     double rv;
     double sdu;
     double sdv;
+    double um;
+    double vm;
+    double umd;
+    double vmd;
     long u;
     long v;
     static DataModel dm;
@@ -33,13 +39,17 @@ public class User_pretable {
         while(k.hasNext()){
             long user = k.next();
             
-            double[] uPre = new double[2];
+            double[] uPre = new double[4];
             
             PreferenceArray uAr = dm.getPreferencesFromUser(user);
             double avg = calculateUserAverage(uAr);
             double sdv = calculateUserdeviation(uAr);
+            double med = calculateUserMedian(uAr);
+            double md = calculateMediandeviation(uAr);
             uPre[0] = avg;
             uPre[1] = sdv;
+            uPre[2]	= med;
+            uPre[3] = md;
             map.put(user, uPre);
         }
     }
@@ -59,7 +69,7 @@ public class User_pretable {
         PreferenceArray v_pre = dm.getPreferencesFromUser(current);
         
         NearestBCItemSimilarity NBCS = new NearestBCItemSimilarity(dm);
-        BCItemSimilarity BCIS = new BCItemSimilarity(dm);
+        BCPrecalculator BCIS = new BCPrecalculator(dm);
         
         //BCPrecalculator BP = new BCPrecalculator(dm);
         
@@ -68,16 +78,26 @@ public class User_pretable {
         //System.out.println(ru);
         ru = uR[0];
         rv = vR[0];
+        
         sdu = uR[1];
         sdv = vR[1];
+        
+        um = uR[2];
+        vm = vR[2];
+        
+        umd = uR[3];
+        vmd = vR[3];
         
         double similarity = 0;
         //int count = 0;
         for(Preference p_u : u_pre){
-            HashSet<Long> neighbour_Set = NBCS.getNearestByBC(p_u.getItemID(), 3);
+            
+           HashSet<Long> neighbour_Set = NBCS.getNearest(p_u.getItemID(), 3);
             for(Preference p_v : v_pre){
                 if(neighbour_Set.contains(p_v.getItemID())){
                     //System.out.println(User_Similarity.count++);
+                    //System.out.println(BCIS.itemSimilarity(p_u.getItemID(), p_v.getItemID())* 
+                      //      sim(p_u.getItemID(), p_v.getItemID()));
                     similarity += BCIS.itemSimilarity(p_u.getItemID(), p_v.getItemID()) * 
                             sim(p_u.getItemID(), p_v.getItemID());
                     
@@ -100,17 +120,42 @@ public class User_pretable {
         }
         return Math.sqrt((sum*1.0)/pre.length());
     }
-
+    
+    private static double calculateMediandeviation(PreferenceArray pre) {
+        double median = calculateUserMedian(pre);
+        double sum = 0;
+        for(Preference p : pre){
+            sum += Math.pow((p.getValue()-median), 2);
+        }
+        return Math.sqrt(sum);
+    }
+    
     private static double calculateUserAverage(PreferenceArray pre) {
         long sum = 0;
         for(Preference p : pre){
             sum += p.getValue();
         }
-        return Math.sqrt((sum * 1.0)/pre.length());
+        //System.out.println((sum*1.0)/pre.length());
+        return (sum * 1.0)/pre.length();
     }
+    
+    private static double calculateUserMedian(PreferenceArray pre) {
+        long sum = 0;
+        ArrayList<Float> ar = new ArrayList<Float>();
+        for(Preference p : pre){
+            ar.add(p.getValue());
+        }
+        //System.out.println((sum*1.0)/pre.length());
+        Collections.sort(ar);
+        return ar.get(ar.size()/2);
+    }
+    
+   
 
     private double sim(long itemID1, long itemID2) throws TasteException {
         //return 1+1;
-       return ((dm.getPreferenceValue(u, itemID1) - this.ru) * (dm.getPreferenceValue(u, itemID1) - this.rv))/(this.sdv * this.sdu);
+       //System.out.println(u+" "+itemID1+" "+this.ru+" "+this.sdu);
+       //System.out.println(((dm.getPreferenceValue(u, itemID1) - this.ru) * (dm.getPreferenceValue(u, itemID1) - this.rv))/(this.sdv * this.sdu));
+       return ((dm.getPreferenceValue(u, itemID1) - this.um) * (dm.getPreferenceValue(v, itemID2) - this.vm))/(this.umd * this.vmd);
     }
 }

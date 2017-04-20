@@ -14,6 +14,7 @@ import org.apache.mahout.cf.taste.eval.RecommenderEvaluator;
 import org.apache.mahout.cf.taste.impl.eval.AverageAbsoluteDifferenceRecommenderEvaluator;
 import org.apache.mahout.cf.taste.impl.eval.RMSRecommenderEvaluator;
 import org.apache.mahout.cf.taste.impl.model.file.FileDataModel;
+import org.apache.mahout.cf.taste.impl.neighborhood.NearestNUserNeighborhood;
 import org.apache.mahout.cf.taste.impl.neighborhood.ThresholdUserNeighborhood;
 import org.apache.mahout.cf.taste.impl.recommender.GenericUserBasedRecommender;
 import org.apache.mahout.cf.taste.impl.similarity.PearsonCorrelationSimilarity;
@@ -32,7 +33,7 @@ public class EvaluateRecommender {
         @Override
         public Recommender buildRecommender(DataModel dm) throws TasteException {
             UserSimilarity similarity = new PearsonCorrelationSimilarity(dm);
-            UserNeighborhood neighborhood = new ThresholdUserNeighborhood(0.1, similarity, dm);
+            UserNeighborhood neighborhood = new NearestNUserNeighborhood(500, similarity, dm);
             return new GenericUserBasedRecommender(dm, neighborhood, similarity);//
             //return null;
         }
@@ -42,11 +43,12 @@ public class EvaluateRecommender {
     }
     public static void main(String arg[]) throws IOException, TasteException, ClassNotFoundException{
         DataModel model = new FileDataModel(new File("data/movies.csv"));
+        System.out.println("here");
         RandomUtils.useTestSeed();
         RecommenderEvaluator evaluator = new RMSRecommenderEvaluator();
         EvaluateRecommender ev = new EvaluateRecommender();
         RecommenderBuilder builder = ev.new MyRecommenderBuilder();
-        double result = evaluator.evaluate(builder, null, model, 0.6, 1.0); 
+        double result = evaluator.evaluate(builder, null, model, 0.9, 1.0); 
         
         System.out.println(result); 
     }

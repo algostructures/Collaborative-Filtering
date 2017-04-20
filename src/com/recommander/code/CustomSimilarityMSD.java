@@ -23,8 +23,8 @@ public class CustomSimilarityMSD implements UserSimilarity {
     public double getCustomSimilarity(long U, long V) throws TasteException{
         User_pretable us = new User_pretable(dm);
         MSDSimilarity ms = new MSDSimilarity(dm);
-        System.out.println(U+" "+V);
-        return us.similarity(U, V)+ms.getMSDSimilarity(U, V); 
+        System.out.println(U+" "+V+" "+ms.getMSDSimilarity(U, V));
+        return 100*us.similarity(U, V)+ms.getMSDSimilarity(U, V); 
     }
 
 

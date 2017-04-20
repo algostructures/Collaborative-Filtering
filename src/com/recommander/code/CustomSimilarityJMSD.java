@@ -25,7 +25,7 @@ public class CustomSimilarityJMSD implements UserSimilarity {
         MSDSimilarity ms = new MSDSimilarity(dm);
         Jacc js = new Jacc(dm);
         System.out.println(U+" "+V);
-        return us.similarity(U, V)+(ms.getMSDSimilarity(U, V)*js.getJaccardSimilarity(U, V)); 
+        return 100*us.similarity(U, V)+(ms.getMSDSimilarity(U, V)*js.getJaccardSimilarity(U, V)); 
     }
 
 
